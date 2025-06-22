@@ -12,14 +12,12 @@ import { Background } from '~/components/Background'
 
 export const dynamicParams = true
 
-type Params = {
-  params: {
-    slug: string
-  }
+interface PageProps {
+  params: Promise<{ slug: string }>
 }
 
-export default async function CategoryPage({ params }: Params) {
-  const { slug } = params
+export default async function CategoryPage({ params }: PageProps) {
+  const { slug } = await params
 
   const tracks: Track[] = await sanityFetch<Track[]>(getAllTrackDeataillQuery, {
     slug: slug,
