@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   Pause,
   Play,
@@ -28,11 +28,20 @@ export const MusicPlayer = () => {
   const [repeat, setRepeat] = useState(false)
 
   useEffect(() => {
-    if (!currentTrack || !audioRef.current) return
     const audio = audioRef.current
-    audio.src = currentTrack.audioUrl
-    audio.play()
-    setIsPlaying(true)
+    if (!currentTrack || !audio) return
+
+    const playAudio = async () => {
+      try {
+        audio.src = currentTrack.audioUrl
+        await audio.play()
+        setIsPlaying(true)
+      } catch (err) {
+        console.error('Failed to play audio:', err)
+      }
+    }
+
+    playAudio()
 
     const handleLoadedMetadata = () => {
       setDuration(audio.duration || 0)
@@ -43,6 +52,10 @@ export const MusicPlayer = () => {
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata)
   }, [currentTrack])
 
+  const nextTrackAuto = useCallback(
+    () => nextTrack(shufflePlay),
+    [nextTrack, shufflePlay]
+  )
   useEffect(() => {
     const audio = audioRef.current
     if (!audio) return
@@ -52,13 +65,13 @@ export const MusicPlayer = () => {
         audio.currentTime = 0
         audio.play()
       } else {
-        nextTrack(shufflePlay)
+        nextTrackAuto()
       }
     }
 
     audio.addEventListener('ended', handleEnded)
     return () => audio.removeEventListener('ended', handleEnded)
-  }, [repeat, shufflePlay, nextTrack])
+  }, [repeat, nextTrackAuto])
 
   useEffect(() => {
     const interval = setInterval(() => {

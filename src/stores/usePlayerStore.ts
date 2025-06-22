@@ -40,40 +40,26 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 
   nextTrack: (shuffle?: boolean) => {
     const { queue, trackList, currentTrack } = get()
-
     if (!trackList.length) return
 
     if (shuffle) {
       const remainingTracks = trackList.filter(
         (t) => t._id !== currentTrack?._id
       )
+      if (!remainingTracks.length) return
       const random =
         remainingTracks[Math.floor(Math.random() * remainingTracks.length)]
-
-      if (random) {
-        const index = trackList.findIndex((t) => t._id === random._id)
-        const newQueue = trackList.filter((_, i) => i !== index)
-        set({
-          currentIndex: index,
-          currentTrack: random,
-          queue: newQueue,
-        })
-      }
+      const index = trackList.findIndex((t) => t._id === random._id)
+      set({
+        currentIndex: index,
+        currentTrack: random,
+        queue: trackList.filter((_, i) => i !== index),
+      })
     } else {
-      if (!queue.length) {
-        // 🟡 Nếu hết bài, quay lại từ đầu
-        set({
-          currentIndex: 0,
-          currentTrack: trackList[0],
-          queue: trackList.slice(1),
-        })
-        return
-      }
-
+      if (!queue.length) return
       const next = queue[0]
       const newQueue = queue.slice(1)
       const index = trackList.findIndex((t) => t._id === next._id)
-
       set({
         currentIndex: index,
         currentTrack: next,
