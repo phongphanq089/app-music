@@ -42,8 +42,13 @@ export default defineType({
     defineField({
       name: 'category',
       title: 'Category',
-      type: 'reference',
-      to: [{ type: 'category' }],
+      type: 'array',
+      of: [
+        {
+          type: 'reference',
+          to: [{ type: 'category' }],
+        },
+      ],
     }),
     defineField({
       name: 'releaseDate',

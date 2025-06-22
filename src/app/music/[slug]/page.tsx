@@ -1,20 +1,16 @@
-import { TrackCard } from '~/components/TrackCard'
+/* @next-codemod-ignore */
+import { sanityFetch } from '~/sanity/config'
 
-import { Metadata } from 'next'
-import { sanityFetch, urlFor } from '~/sanity/config'
-import Link from 'next/link'
+import {
+  getAllCategoriesQuery,
+  getAllTrackDeataillQuery,
+} from '~/lib/query-sanity'
+import CategoriedList from '~/components/CategoriedList'
+import SliderBarLisMusic from '~/components/layout/list-music/SliderBarLisMusic'
+import { Category, Track } from '~/types'
+import { Background } from '~/components/Background'
 
 export const dynamicParams = true
-
-type Track = {
-  _id: string
-  title: string
-  artist: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  coverImage: any
-  audioUrl: string
-  duration?: string
-}
 
 type Params = {
   params: {
@@ -22,82 +18,22 @@ type Params = {
   }
 }
 
-type Category = {
-  _id: string
-  title: string
-  slug: string
-}
-
-export const getAllCategoriesQuery = `
-  *[_type == "category"] | order(title asc) {
-    _id,
-    title,
-    "slug": slug.current,
-    "thumbnail": thumbnail.asset->url
-  }
-`
-
-export async function generateMetadata({ params }: Params): Promise<Metadata> {
-  return {
-    title: `Category: ${params.slug}`,
-  }
-}
-
-export async function generateStaticParams() {
-  const query = `*[_type == "category"]{ "slug": slug.current }`
-  const slugs: { slug: string }[] = await sanityFetch(query)
-
-  return slugs.map((slug) => ({ slug: slug.slug }))
-}
-
-const categories: Category[] = await sanityFetch(getAllCategoriesQuery)
-
 export default async function CategoryPage({ params }: Params) {
-  const query = `
-    *[_type == "track" && category->slug.current == $slug] {
-      _id,
-      title,
-      artist,
-      coverImage,
-      "audioUrl": audioFile.asset->url,
-      duration
-    }
-  `
-  const tracks: Track[] = await sanityFetch<Track[]>(query, {
-    slug: params.slug,
+  const { slug } = await params
+
+  const tracks: Track[] = await sanityFetch<Track[]>(getAllTrackDeataillQuery, {
+    slug: slug,
   })
+
+  const categories: Category[] = await sanityFetch(getAllCategoriesQuery)
 
   return (
     <div className='p-6'>
-      {/* Menu categories */}
-      <div className='flex gap-3 mb-6 overflow-x-auto'>
-        {categories.map((cat) => (
-          <Link
-            key={cat.slug}
-            href={`/music/${cat.slug}`}
-            className={`px-4 py-2 rounded text-sm whitespace-nowrap ${
-              cat.slug === params.slug
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-200 hover:bg-gray-300'
-            }`}
-          >
-            {cat.title}
-          </Link>
-        ))}
-      </div>
+      <Background slug={slug} />
+      <SliderBarLisMusic track={tracks} />
 
-      {/* Track list */}
-      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
-        {tracks.map((track) => (
-          <TrackCard
-            key={track._id}
-            tracks={tracks}
-            track={{
-              ...track,
-              coverImage: urlFor(track.coverImage).width(400).height(300).url(),
-            }}
-          />
-        ))}
+      <div className='fixed right-3 top-3'>
+        <CategoriedList categoriesList={categories} />
       </div>
     </div>
   )

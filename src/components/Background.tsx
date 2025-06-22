@@ -1,30 +1,43 @@
 'use client'
 
-import Image from 'next/image'
-import { motion, AnimatePresence } from 'framer-motion'
-import { usePlayer } from '~/providers/PlayerContext'
+import { useCategoriesStore } from '~/stores/useCategoriesStore'
+import { useEffect, useState } from 'react'
 
-export const Background = () => {
-  const { currentTrack } = usePlayer()
+interface Props {
+  slug?: string
+}
 
+export const Background = ({ slug }: Props) => {
+  const { categories } = useCategoriesStore()
+  const [category, setCategory] = useState(() =>
+    categories.find((c) => c.slug === slug)
+  )
+
+  // Update nếu categories được load sau
+  useEffect(() => {
+    setCategory(categories.find((c) => c.slug === slug))
+  }, [categories, slug])
+
+  if (!category) return null
   return (
-    <AnimatePresence>
-      {currentTrack?.coverImage && (
-        <motion.div
-          key={currentTrack.coverImage}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className='absolute inset-0 -z-10'
-        >
-          <Image
-            src={currentTrack.coverImage}
-            alt='Background'
-            fill
-            className='object-cover'
-          />
-        </motion.div>
+    <div className='absolute inset-0 -z-10'>
+      {category.isVideo && category.videoUrl ? (
+        <video
+          className='w-full h-full object-cover'
+          src={category.videoUrl}
+          autoPlay
+          loop
+          muted
+          playsInline
+        />
+      ) : (
+        <div
+          className='w-full h-full bg-center bg-cover'
+          style={{ backgroundImage: `url(${category.thumbnail})` }}
+        />
       )}
-    </AnimatePresence>
+
+      {/* <div className='absolute inset-0 bg-black/40 backdrop-blur-sm' /> */}
+    </div>
   )
 }

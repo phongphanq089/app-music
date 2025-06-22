@@ -34,5 +34,18 @@ export default defineType({
         hotspot: true,
       },
     }),
+    defineField({
+      name: 'videoFile',
+      title: 'Video File (Optional)',
+      type: 'file',
+      options: {
+        accept: 'video/*',
+      },
+    }),
+    defineField({
+      name: 'isVideo',
+      title: 'Is Video',
+      type: 'boolean',
+    }),
   ],
 })
