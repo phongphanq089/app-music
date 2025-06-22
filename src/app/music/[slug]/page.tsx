@@ -19,7 +19,7 @@ type Params = {
 }
 
 export default async function CategoryPage({ params }: Params) {
-  const { slug } = await params
+  const { slug } = params
 
   const tracks: Track[] = await sanityFetch<Track[]>(getAllTrackDeataillQuery, {
     slug: slug,
