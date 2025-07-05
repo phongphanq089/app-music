@@ -114,7 +114,7 @@ export const MusicPlayer = () => {
                 onClickNext={() => nextTrack(shufflePlay)}
                 customVolumeControls={[]}
                 customAdditionalControls={[]}
-                className='!bg-transparent text-black border-none shadow-none w-full'
+                className='!bg-transparent text-black border-none shadow-none w-full  audio-player-custom'
               />
             </div>
           </div>
