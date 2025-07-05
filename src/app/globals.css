@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -119,4 +119,43 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* audio-player-custom.css */
+.audio-player-custom {
+  border: none;
+  background: transparent !important;
+  box-shadow: none;
+}
+
+.audio-player-custom .rhap_progress-indicator {
+  background-color: white;
+  width: 10px;
+  height: 10px;
+  top: -4px;
+}
+
+.audio-player-custom .rhap_progress-filled {
+  background: linear-gradient(to right, #16ece2, #5c6dfd);
+  height: 4px;
+  border-radius: 999px;
+}
+
+.audio-player-custom .rhap_progress-bar {
+  background-color: #ddd;
+  height: 4px;
+  border-radius: 999px;
+}
+
+.audio-player-custom .rhap_controls-section {
+  justify-content: center;
+}
+
+.audio-player-custom .rhap_main-controls-button {
+  color: black;
+  transition: transform 0.2s;
+}
+
+.audio-player-custom .rhap_main-controls-button:hover {
+  transform: scale(1.2);
 }

@@ -35,7 +35,7 @@ const SliderBarLisMusic = ({ track }: { track: Track[] }) => {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -300, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className='w-[400px] shadow  rounded-xl h-[80vh] overflow-hidden bg-white/30 backdrop-blur'
+            className='w-[400px] shadow  rounded-xl h-[75vh] sm:h-[80vh] overflow-hidden bg-white/30 backdrop-blur'
           >
             <ScrollArea className='w-full h-full px-6 py-4'>
               {trackList.length === 0 ? (

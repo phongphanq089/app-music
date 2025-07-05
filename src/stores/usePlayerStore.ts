@@ -56,7 +56,10 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
         queue: trackList.filter((_, i) => i !== index),
       })
     } else {
-      if (!queue.length) return
+      if (!queue.length) {
+        set({ currentTrack: null })
+        return
+      }
       const next = queue[0]
       const newQueue = queue.slice(1)
       const index = trackList.findIndex((t) => t._id === next._id)
