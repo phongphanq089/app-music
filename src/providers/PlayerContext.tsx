@@ -33,16 +33,19 @@ export const PlayerContextProvider = ({
 
   const [queue, setQueue] = useState<Track[]>([])
 
-  const playTrack = useCallback((track: Track, list?: Track[]) => {
-    const listToUse = list || trackList
-    const index = listToUse.findIndex((t) => t._id === track._id)
-    if (index !== -1) {
-      setTrackList(listToUse)
-      setCurrentIndex(index)
-      setCurrentTrack(track)
-      setQueue(listToUse.slice(index + 1))
-    }
-  }, [])
+  const playTrack = useCallback(
+    (track: Track, list?: Track[]) => {
+      const listToUse = list || trackList
+      const index = listToUse.findIndex((t) => t._id === track._id)
+      if (index !== -1) {
+        setTrackList(listToUse)
+        setCurrentIndex(index)
+        setCurrentTrack(track)
+        setQueue(listToUse.slice(index + 1))
+      }
+    },
+    [trackList],
+  )
 
   const nextTrack = useCallback(() => {
     if (!queue.length) return

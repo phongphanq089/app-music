@@ -1,17 +1,27 @@
 import Link from 'next/link'
-import { HoleBackground } from '~/components/ui/HoleBackground '
+import AnimatedButton from '~/components/ui/AnimatedButton'
+import Prism from '~/components/ui/Prism'
 
 export default function Home() {
   return (
-    <div className='h-screen w-full relative'>
-      <HoleBackground className='absolute inset-0 flex items-center justify-center rounded-xl' />
+    <div className='h-screen w-full relative bg-black'>
+      <Prism
+        animationType='rotate'
+        timeScale={0.5}
+        height={3.5}
+        baseWidth={5.5}
+        scale={3.6}
+        hueShift={0}
+        colorFrequency={1}
+        noise={0}
+        glow={1}
+      />
 
-      <Link
-        href={'/music/all'}
-        className='absolute top-1/2 left-1/2 -translate-1/2 z-10 cursor-pointer bg-linear-to-t from-sky-500 to-indigo-500 text-white flex items-center justify-center w-32 h-32 rounded-full p-4 text-center font-bold'
-      >
-        Listening music
-      </Link>
+      <div className='absolute top-1/2 left-1/2 -translate-1/2 z-10'>
+        <AnimatedButton>
+          <Link href={'/music/all'}>Play Music</Link>
+        </AnimatedButton>
+      </div>
     </div>
   )
 }

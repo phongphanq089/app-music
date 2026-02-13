@@ -17,6 +17,8 @@ type PlayerStore = {
   nextTrack: (shuffle?: boolean) => void
   prevTrack: () => void
   setQueue: (queue: Track[]) => void
+  isPlayerExpanded: boolean
+  togglePlayer: () => void
 }
 
 export const usePlayerStore = create<PlayerStore>((set, get) => ({
@@ -44,7 +46,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 
     if (shuffle) {
       const remainingTracks = trackList.filter(
-        (t) => t._id !== currentTrack?._id
+        (t) => t._id !== currentTrack?._id,
       )
       if (!remainingTracks.length) return
       const random =
@@ -57,7 +59,13 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
       })
     } else {
       if (!queue.length) {
-        set({ currentTrack: null })
+        // Loop back to the first track
+        const firstTrack = trackList[0]
+        set({
+          currentIndex: 0,
+          currentTrack: firstTrack,
+          queue: trackList.slice(1),
+        })
         return
       }
       const next = queue[0]
@@ -85,4 +93,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
   },
 
   setQueue: (queue) => set({ queue }),
+  isPlayerExpanded: true,
+  togglePlayer: () =>
+    set((state) => ({ isPlayerExpanded: !state.isPlayerExpanded })),
 }))

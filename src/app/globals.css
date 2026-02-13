@@ -41,6 +41,14 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* Terminal Theme custom colors */
+  --color-terminal-primary: #bd93f9;
+  --color-terminal-secondary: #50fa7b;
+  --color-terminal-accent: #8be9fd;
+  --color-terminal-bg: #101014;
+  --color-terminal-header: #21222c;
+  --font-terminal: 'Fira Code', 'JetBrains Mono', monospace;
 }
 
 :root {
@@ -79,19 +87,19 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
+  --background: #101014; /* oklch(0.145 0 0); */
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
+  --primary: #bd93f9; /* oklch(0.922 0 0); */
   --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
+  --secondary: #50fa7b; /* oklch(0.269 0 0); */
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
+  --accent: #8be9fd; /* oklch(0.269 0 0); */
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
@@ -117,45 +125,125 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-mono;
   }
 }
 
-/* audio-player-custom.css */
+/* Terminal Vibes Custom Styles */
+.scanline {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0) 50%,
+    rgba(0, 0, 0, 0.1) 50%,
+    rgba(0, 0, 0, 0.1)
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 50;
+  opacity: 0.15;
+}
+
+.glass-panel {
+  background: rgba(16, 16, 20, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(139, 233, 253, 0.1);
+}
+
+.crt-flicker {
+  animation: textShadow 1.6s infinite;
+}
+
+@keyframes textShadow {
+  0% {
+    text-shadow:
+      0.4389924193300864px 0 1px rgba(0, 30, 255, 0.5),
+      -0.4389924193300864px 0 1px rgba(255, 0, 80, 0.3),
+      0 0 3px;
+  }
+  5% {
+    text-shadow:
+      2.7928974010788217px 0 1px rgba(0, 30, 255, 0.5),
+      -2.7928974010788217px 0 1px rgba(255, 0, 80, 0.3),
+      0 0 3px;
+  }
+  100% {
+    text-shadow:
+      0.4389924193300864px 0 1px rgba(0, 30, 255, 0.5),
+      -0.4389924193300864px 0 1px rgba(255, 0, 80, 0.3),
+      0 0 3px;
+  }
+}
+
+/* Audio Player Custom Overrides */
 .audio-player-custom {
-  border: none;
+  border: none !important;
   background: transparent !important;
-  box-shadow: none;
+  box-shadow: none !important;
+  padding: 0 !important;
 }
 
 .audio-player-custom .rhap_progress-indicator {
-  background-color: white;
-  width: 10px;
-  height: 10px;
+  background-color: var(--color-terminal-secondary) !important;
+  width: 12px;
+  height: 12px;
   top: -4px;
+  box-shadow: 0 0 10px var(--color-terminal-secondary);
 }
 
 .audio-player-custom .rhap_progress-filled {
-  background: linear-gradient(to right, #16ece2, #5c6dfd);
+  background: var(--color-terminal-primary) !important;
   height: 4px;
   border-radius: 999px;
+  box-shadow: 0 0 5px var(--color-terminal-primary);
 }
 
 .audio-player-custom .rhap_progress-bar {
-  background-color: #ddd;
+  background-color: rgba(255, 255, 255, 0.1) !important;
   height: 4px;
   border-radius: 999px;
 }
 
-.audio-player-custom .rhap_controls-section {
-  justify-content: center;
+.audio-player-custom .rhap_time {
+  color: #8be9fd !important; /* accent */
+  font-family: 'Fira Code', monospace;
+  font-size: 10px;
 }
 
 .audio-player-custom .rhap_main-controls-button {
-  color: black;
-  transition: transform 0.2s;
+  color: #bd93f9 !important; /* primary */
+  transition:
+    transform 0.2s,
+    color 0.2s;
 }
 
 .audio-player-custom .rhap_main-controls-button:hover {
-  transform: scale(1.2);
+  transform: scale(1.1);
+  color: white !important;
+}
+
+.audio-player-custom .rhap_play-pause-button {
+  font-size: 40px !important;
+  color: #bd93f9 !important;
+}
+
+.scroll-custom::-webkit-scrollbar-track {
+  background-color: #f5f5f5;
+  border-radius: 999px;
+}
+
+.scroll-custom::-webkit-scrollbar {
+  width: 6px;
+  background-color: #f5f5f5;
+  border-radius: 999px;
+}
+
+.scroll-custom::-webkit-scrollbar-thumb {
+  background-color: #a3a3a3;
+  border-radius: 999px;
 }

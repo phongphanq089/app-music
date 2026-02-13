@@ -11,12 +11,12 @@ export const getAllTracksQuery = `
   }
 `
 
-export const getAllTrackDeataillQuery = `
-    *[_type == "track" && references(*[_type == "category" && slug.current == $slug]._id)] {
+export const getTracksByCategoryQuery = `
+    *[_type == "track" && references(*[_type == "category" && slug.current == $slug]._id)] | order(releaseDate desc, _id desc) [$start...$end] {
       _id,
       title,
       artist,
-      coverImage,
+      "coverImage": coverImage.asset->url,
       "audioUrl": audioFile.asset->url,
       duration
     }
@@ -30,5 +30,18 @@ export const getAllCategoriesQuery = `
     isVideo,
     "slug": slug.current,
     "thumbnail": thumbnail.asset->url
+  }
+`
+
+export const getTracksRangeQuery = `
+  *[_type == "track"] | order(releaseDate desc, _id desc) [$start...$end] {
+    _id,
+    title,
+    artist,
+    "coverImage": coverImage.asset->url,
+    "audioUrl": audioFile.asset->url,
+    "category": category->title,
+    duration,
+    isFeatured
   }
 `

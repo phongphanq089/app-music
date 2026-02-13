@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Terminal Vibes Music Player</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap"
+    rel="stylesheet" />
+  <!-- Material Symbols -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <!-- Tailwind Config -->
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#135bec",
+            "background-light": "#f6f6f8",
+            "background-dark": "#101622",
+            "terminal-green": "#4ade80",
+            "terminal-purple": "#c084fc",
+            "terminal-cyan": "#2dd4bf",
+            "terminal-bg": "#1e293b",
+          },
+          fontFamily: {
+            "display": ["Spline Sans", "sans-serif"],
+            "mono": ["JetBrains Mono", "monospace"],
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .blinking-cursor::after {
+      content: '█';
+      animation: blink 1s step-end infinite;
+      margin-left: 2px;
+      color: #135bec;
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0;
+      }
+    }
+
+    /* Custom scrollbar for terminal list */
+    .terminal-scroll::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .terminal-scroll::-webkit-scrollbar-track {
+      background: #111827;
+    }
+
+    .terminal-scroll::-webkit-scrollbar-thumb {
+      background: #374151;
+      border-radius: 4px;
+    }
+
+    .terminal-scroll::-webkit-scrollbar-thumb:hover {
+      background: #4b5563;
+    }
+  </style>
+</head>
+
+<body
+  class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display h-screen flex flex-col overflow-hidden">
+  <!-- Top Navigation / Header -->
+  <header
+    class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-[#232f48] bg-white/80 dark:bg-[#111722]/90 backdrop-blur-md px-6 py-3 z-20 shrink-0">
+    <div class="flex items-center gap-4">
+      <div class="text-primary">
+        <span class="material-symbols-outlined text-[28px]">terminal</span>
+      </div>
+      <h2 class="text-lg font-bold leading-tight tracking-[-0.015em] font-mono dark:text-gray-100">
+        <span class="text-terminal-green">user@lofi</span>:<span class="text-primary">~</span>$ ./vibes_v2.0
+      </h2>
+    </div>
+    <div class="flex items-center gap-4">
+      <!-- Pomodoro Timer Small Display -->
+      <div
+        class="hidden md:flex items-center gap-2 bg-slate-100 dark:bg-[#1e293b] px-3 py-1.5 rounded-lg border border-slate-200 dark:border-[#334155]">
+        <span class="material-symbols-outlined text-sm text-terminal-cyan">timer</span>
+        <span class="font-mono text-sm font-bold text-terminal-cyan">25:00</span>
+        <span class="text-xs text-slate-500 dark:text-slate-400 font-mono">FOCUS MODE</span>
+      </div>
+      <div class="w-px h-6 bg-slate-200 dark:bg-[#334155] mx-2"></div>
+      <button
+        class="flex items-center justify-center rounded-lg size-9 hover:bg-slate-100 dark:hover:bg-[#232f48] text-slate-500 dark:text-slate-400 transition-colors">
+        <span class="material-symbols-outlined text-[20px]">minimize</span>
+      </button>
+      <button
+        class="flex items-center justify-center rounded-lg size-9 hover:bg-slate-100 dark:hover:bg-[#232f48] text-slate-500 dark:text-slate-400 transition-colors">
+        <span class="material-symbols-outlined text-[20px]">check_box_outline_blank</span>
+      </button>
+      <button
+        class="flex items-center justify-center rounded-lg size-9 hover:bg-red-500/10 hover:text-red-500 text-slate-500 dark:text-slate-400 transition-colors">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+      <div
+        class="bg-center bg-no-repeat bg-cover rounded-full size-9 border border-slate-200 dark:border-[#334155] ml-2"
+        data-alt="User avatar profile picture"
+        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCyorR6aXlC9n9m6Y_GENwD1UgS9uo5Z3uSPdceutEiE61ljMMZTGI0vepiuHxFLpv1TPxKgVY8bnDs7Eynx-Qhn2W3I0ebY0ql8U_zPnSFP5i132rBjSW48Jl5S_DEGicB3ZBtTdKCFrYoI195yHLnxbpJMw8RVFVjtZRjn-EugnLldQDxu6h5uonjh88t7uYrx4pBQSNItWl-56-IZoHr26kR7giTCGcfd7ihQ73Cr1DJhR5vynUUaZCFwalcGhhfBnab1ed3EFc");'>
+      </div>
+    </div>
+  </header>
+  <!-- Main Content Area -->
+  <main class="flex flex-1 overflow-hidden relative">
+    <!-- Background Image Layer -->
+    <div class="absolute inset-0 z-0 bg-cover bg-center opacity-20 dark:opacity-40"
+      data-alt="Dark moody rainy city night with neon lights reflections"
+      style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBz2GypLaRUC9g_soTqC4ZPmYzQzP1lp5B1D1QrdqhOUqEu_9hwatzx09Js6AX-T-7gwNpyNspDrB7pSm2Wm7J1_cwsrTT_NVgrJgxiahjmOtDnUAS3ne2is2VuPBw2qtXUMmbSCkpBzTcAtFqLHFj-6UaSZJcc3GovDEPvCD5_oZCbqyzSuuynrN6YnF7Vho6Wztp23tjZ2cSArt8w2LBpX9a2ccCwk50Nd6kwMXECDQAKz1LcWHfKW8FcjNlmqTp_YtqM0Yd9LSs');">
+    </div>
+    <div
+      class="absolute inset-0 z-0 bg-gradient-to-r from-background-light/90 to-background-light/70 dark:from-background-dark/95 dark:to-background-dark/80 backdrop-blur-sm">
+    </div>
+    <div class="flex w-full h-full z-10 p-4 gap-4 md:p-6 md:gap-6 flex-col lg:flex-row">
+      <!-- Left Pane: Visualizer & Current Track Info -->
+      <section class="flex flex-col flex-1 min-h-[300px] lg:h-full gap-6 rounded-xl overflow-hidden relative group">
+        <!-- Visualizer Container -->
+        <div
+          class="relative flex-1 rounded-xl overflow-hidden border border-slate-200 dark:border-[#334155] shadow-lg bg-black/50">
+          <div
+            class="absolute inset-0 bg-cover bg-center transition-transform duration-[20s] ease-linear scale-100 group-hover:scale-110"
+            data-alt="Cyberpunk rainy window view with code overlay"
+            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCJFtOZb_HLQMgAMKxWFC-T9zQwURuJfZyGVxa7ZefbtEu4JYxDr_yp78mfRoAJwm53oguMflvdjJ6Z1oG8cBaPzuZOJfGahujMkPF9DaRTZVh0uLm_Lra0Ljl3JPIuRcr_-cXk57ARDr5CP6wz6pu7iM2QJ4xQRMlQD6E1_6j8Gr4wLYrBODpWFHbrPqWiGMxVL7jrQ3ZnMbhIVeIt-1rAEmi2rSOailVyk3AQNnqclJQuC_Y9mcfBPgW2DkTYHQHmcsknm6NrWqM');">
+          </div>
+          <!-- Code Overlay Effect -->
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30"></div>
+          <div class="absolute top-6 left-6 font-mono text-xs md:text-sm text-terminal-green/80 drop-shadow-md">
+            <p>&gt; init_sequence(visuals)</p>
+            <p>&gt; load_texture: rain_city.png</p>
+            <p>&gt; status: <span class="animate-pulse">ONLINE</span></p>
+          </div>
+          <!-- Now Playing Large Text -->
+          <div
+            class="absolute bottom-0 left-0 right-0 p-6 md:p-10 bg-gradient-to-t from-black/90 via-black/60 to-transparent">
+            <div class="flex items-end justify-between">
+              <div class="flex flex-col gap-2">
+                <div
+                  class="inline-flex items-center px-2 py-0.5 rounded border border-terminal-purple/50 bg-terminal-purple/10 text-terminal-purple text-xs font-mono w-fit mb-2">
+                  CURRENT_PROCESS_ID: 2049
+                </div>
+                <h1
+                  class="text-white text-3xl md:text-5xl font-bold leading-tight tracking-tight drop-shadow-xl max-w-2xl">
+                  Lofi Hip Hop Radio - Beats to Relax/Study To
+                </h1>
+                <p class="text-slate-300 text-lg font-mono mt-2 blinking-cursor">
+                  <span class="text-terminal-purple">const</span> <span class="text-terminal-cyan">artist</span> =
+                  "ChilledCow";
+                </p>
+              </div>
+              <!-- EQ Visualizer placeholder -->
+              <div class="hidden md:flex gap-1 h-12 items-end pb-1 opacity-70">
+                <div class="w-1 bg-terminal-cyan h-[40%] animate-[pulse_1s_ease-in-out_infinite]"></div>
+                <div class="w-1 bg-terminal-cyan h-[70%] animate-[pulse_1.2s_ease-in-out_infinite]"></div>
+                <div class="w-1 bg-terminal-cyan h-[50%] animate-[pulse_0.8s_ease-in-out_infinite]"></div>
+                <div class="w-1 bg-terminal-cyan h-[90%] animate-[pulse_1.5s_ease-in-out_infinite]"></div>
+                <div class="w-1 bg-terminal-cyan h-[60%] animate-[pulse_1.1s_ease-in-out_infinite]"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- Right Pane: Terminal Track List -->
+      <section
+        class="flex flex-col w-full lg:w-[420px] bg-white/50 dark:bg-[#111722]/80 backdrop-blur-md border border-slate-200 dark:border-[#334155] rounded-xl overflow-hidden shadow-xl">
+        <!-- Terminal Header -->
+        <div
+          class="flex items-center justify-between px-4 py-3 bg-slate-100 dark:bg-[#1e293b] border-b border-slate-200 dark:border-[#334155]">
+          <div class="flex gap-2">
+            <div class="size-3 rounded-full bg-red-500"></div>
+            <div class="size-3 rounded-full bg-yellow-500"></div>
+            <div class="size-3 rounded-full bg-green-500"></div>
+          </div>
+          <div class="font-mono text-xs text-slate-500 dark:text-slate-400">~/music/playlist</div>
+          <span class="material-symbols-outlined text-slate-400 text-sm">settings</span>
+        </div>
+        <!-- Tabs -->
+        <div class="flex border-b border-slate-200 dark:border-[#334155] bg-white/30 dark:bg-[#111722]/30">
+          <button
+            class="px-6 py-2.5 text-sm font-mono font-medium text-primary border-b-2 border-primary bg-primary/5">Console</button>
+          <button
+            class="px-6 py-2.5 text-sm font-mono font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">Output</button>
+          <button
+            class="px-6 py-2.5 text-sm font-mono font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">Problems</button>
+        </div>
+        <!-- Track List (Code Style) -->
+        <div class="flex-1 overflow-y-auto p-2 terminal-scroll font-mono text-sm">
+          <div class="flex flex-col gap-1">
+            <!-- Active Item -->
+            <div
+              class="group flex items-center p-2 rounded hover:bg-slate-200/50 dark:hover:bg-[#1e293b] cursor-pointer bg-primary/10 border-l-2 border-primary">
+              <span class="material-symbols-outlined text-primary text-[18px] mr-3">play_arrow</span>
+              <div class="flex flex-col flex-1 min-w-0">
+                <div class="flex items-center text-slate-800 dark:text-slate-200 truncate">
+                  <span class="text-terminal-purple mr-2">func</span>
+                  <span class="truncate">lofi_rain_01.mp3</span>
+                </div>
+                <div class="text-xs text-slate-500 flex gap-2">
+                  <span>--duration 3:45</span>
+                  <span class="text-terminal-green">Active</span>
+                </div>
+              </div>
+            </div>
+            <!-- Regular Item -->
+            <div
+              class="group flex items-center p-2 rounded hover:bg-slate-200/50 dark:hover:bg-[#1e293b] cursor-pointer border-l-2 border-transparent hover:border-slate-300 dark:hover:border-slate-600">
+              <span
+                class="material-symbols-outlined text-slate-400 text-[18px] mr-3 opacity-0 group-hover:opacity-100">terminal</span>
+              <div class="flex flex-col flex-1 min-w-0">
+                <div
+                  class="flex items-center text-slate-600 dark:text-slate-400 truncate group-hover:text-slate-900 dark:group-hover:text-slate-200">
+                  <span class="text-terminal-purple/70 mr-2 group-hover:text-terminal-purple">import</span>
+                  <span class="truncate">night_coding_session.wav</span>
+                </div>
+                <div class="text-xs text-slate-500 dark:text-slate-600">
+                  <span>--duration 2:30</span>
+                </div>
+              </div>
+            </div>
+            <!-- Regular Item -->
+            <div
+              class="group flex items-center p-2 rounded hover:bg-slate-200/50 dark:hover:bg-[#1e293b] cursor-pointer border-l-2 border-transparent hover:border-slate-300 dark:hover:border-slate-600">
+              <span
+                class="material-symbols-outlined text-slate-400 text-[18px] mr-3 opacity-0 group-hover:opacity-100">terminal</span>
+              <div class="flex flex-col flex-1 min-w-0">
+                <div
+                  class="flex items-center text-slate-600 dark:text-slate-400 truncate group-hover:text-slate-900 dark:group-hover:text-slate-200">
+                  <span class="text-terminal-purple/70 mr-2 group-hover:text-terminal-purple">import</span>
+                  <span class="truncate">syntax_error_blues.flac</span>
+                </div>
+                <div class="text-xs text-slate-500 dark:text-slate-600">
+                  <span>--duration 4:12</span>
+                </div>
+              </div>
+            </div>
+            <!-- Regular Item -->
+            <div
+              class="group flex items-center p-2 rounded hover:bg-slate-200/50 dark:hover:bg-[#1e293b] cursor-pointer border-l-2 border-transparent hover:border-slate-300 dark:hover:border-slate-600">
+              <span
+                class="material-symbols-outlined text-slate-400 text-[18px] mr-3 opacity-0 group-hover:opacity-100">terminal</span>
+              <div class="flex flex-col flex-1 min-w-0">
+                <div
+                  class="flex items-center text-slate-600 dark:text-slate-400 truncate group-hover:text-slate-900 dark:group-hover:text-slate-200">
+                  <span class="text-terminal-purple/70 mr-2 group-hover:text-terminal-purple">import</span>
+                  <span class="truncate">coffee_break_loop.ogg</span>
+                </div>
+                <div class="text-xs text-slate-500 dark:text-slate-600">
+                  <span>--duration 1:58</span>
+                </div>
+              </div>
+            </div>
+            <!-- Regular Item -->
+            <div
+              class="group flex items-center p-2 rounded hover:bg-slate-200/50 dark:hover:bg-[#1e293b] cursor-pointer border-l-2 border-transparent hover:border-slate-300 dark:hover:border-slate-600">
+              <span
+                class="material-symbols-outlined text-slate-400 text-[18px] mr-3 opacity-0 group-hover:opacity-100">terminal</span>
+              <div class="flex flex-col flex-1 min-w-0">
+                <div
+                  class="flex items-center text-slate-600 dark:text-slate-400 truncate group-hover:text-slate-900 dark:group-hover:text-slate-200">
+                  <span class="text-terminal-purple/70 mr-2 group-hover:text-terminal-purple">import</span>
+                  <span class="truncate">debug_mode_active.mp3</span>
+                </div>
+                <div class="text-xs text-slate-500 dark:text-slate-600">
+                  <span>--duration 3:22</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 pt-4 border-t border-slate-200 dark:border-[#334155] text-xs text-slate-500 font-mono">
+            <p>&gt; 5 files found in directory.</p>
+            <p>&gt; Ready for input<span class="animate-pulse">_</span></p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <!-- Debug Console Player (Bottom Bar) -->
+  <footer
+    class="bg-white dark:bg-[#0f1520] border-t border-slate-200 dark:border-[#232f48] px-6 py-4 z-30 shrink-0 shadow-2xl">
+    <div class="flex flex-col lg:flex-row items-center gap-6 justify-between max-w-[1600px] mx-auto">
+      <!-- Controls & Progress -->
+      <div class="flex flex-col w-full lg:flex-1 gap-2">
+        <div class="flex items-center justify-between font-mono text-xs text-slate-500 dark:text-slate-400 mb-1">
+          <span>01:45</span>
+          <span class="text-terminal-purple">executing...</span>
+          <span>03:45</span>
+        </div>
+        <!-- Custom Progress Bar -->
+        <div class="h-2 w-full bg-slate-200 dark:bg-[#1e293b] rounded-full overflow-hidden cursor-pointer group">
+          <div class="h-full bg-primary w-[45%] relative group-hover:bg-primary/90 transition-all">
+            <div class="absolute right-0 top-0 bottom-0 w-2 bg-white/50 animate-pulse"></div>
+          </div>
+        </div>
+        <div class="flex justify-between items-center mt-2">
+          <!-- Playback Buttons -->
+          <div class="flex items-center gap-4">
+            <button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+              title="Step Back">
+              <span class="material-symbols-outlined">skip_previous</span>
+            </button>
+            <button
+              class="size-10 flex items-center justify-center rounded-full bg-primary text-white hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all"
+              title="Run / Debug">
+              <span class="material-symbols-outlined fill-current">play_arrow</span>
+            </button>
+            <button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+              title="Step Over">
+              <span class="material-symbols-outlined">skip_next</span>
+            </button>
+            <button class="ml-2 text-slate-400 hover:text-terminal-green transition-colors" title="Loop">
+              <span class="material-symbols-outlined text-[20px]">repeat</span>
+            </button>
+          </div>
+          <!-- Volume -->
+          <div class="flex items-center gap-3 w-32 md:w-48 group">
+            <span class="material-symbols-outlined text-slate-400 text-[20px]">volume_up</span>
+            <div class="flex-1 h-1 bg-slate-200 dark:bg-[#1e293b] rounded-full cursor-pointer overflow-hidden">
+              <div class="h-full bg-slate-500 dark:bg-slate-400 w-[70%] group-hover:bg-primary transition-colors"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Pomodoro & Settings (Right Side Footer) -->
+      <div
+        class="flex items-center gap-6 w-full lg:w-auto justify-between lg:justify-end border-t lg:border-t-0 border-slate-200 dark:border-[#232f48] pt-4 lg:pt-0">
+        <!-- Detailed Pomodoro Module -->
+        <div
+          class="flex items-center gap-4 bg-slate-100 dark:bg-[#1e293b] rounded-lg p-2 border border-slate-200 dark:border-[#334155]">
+          <div class="flex flex-col items-center justify-center px-2">
+            <span class="text-[10px] uppercase font-bold text-slate-400 font-mono tracking-wider">Session</span>
+            <span class="text-xl font-mono font-bold text-slate-800 dark:text-white leading-none mt-1">25:00</span>
+          </div>
+          <div class="flex gap-1">
+            <button
+              class="size-8 rounded bg-primary/10 hover:bg-primary/20 text-primary flex items-center justify-center transition-colors">
+              <span class="material-symbols-outlined text-[18px]">play_arrow</span>
+            </button>
+            <button
+              class="size-8 rounded bg-slate-200 dark:bg-[#334155] hover:bg-slate-300 dark:hover:bg-[#475569] text-slate-500 dark:text-slate-300 flex items-center justify-center transition-colors">
+              <span class="material-symbols-outlined text-[18px]">refresh</span>
+            </button>
+          </div>
+        </div>
+        <div class="h-8 w-px bg-slate-200 dark:bg-[#232f48] hidden lg:block"></div>
+        <div class="flex items-center gap-2">
+          <button
+            class="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100 dark:bg-[#1e293b] hover:bg-slate-200 dark:hover:bg-[#2d3b52] transition-colors border border-transparent hover:border-slate-300 dark:hover:border-slate-600">
+            <span class="material-symbols-outlined text-slate-500 dark:text-slate-400 text-[20px]">tune</span>
+            <span class="text-sm font-medium text-slate-600 dark:text-slate-300 hidden xl:inline">Mixer</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>
